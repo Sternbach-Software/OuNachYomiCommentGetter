@@ -4,10 +4,10 @@ import kotlin.system.measureNanoTime
 
 fun main() {
     val y = measureNanoTime{
-        val z = newFixedThreadPoolContext(20, "MyOwnThread")
+        val scope = newFixedThreadPoolContext(20, "MyOwnThread")
         //3000-5000
-        val a = (3235..3200).map {
-            GlobalScope.async(z) {
+        val a = (2000..3200).map {
+            GlobalScope.async(scope) {
                 val b = URL("https://www.outorah.org/p/$it").readText()
                 if (b.lastIndexOf("Nach Yomi",b.indexOf("</title>"))==-1) println("Not nach yomi: $it")
                 println("Parsed: $it/3000")
@@ -17,7 +17,7 @@ fun main() {
         runBlocking {
             a.forEach { it.await() }
         }
-        z.close()
+        scope.close()
     }
     println("Time: ${y/1_000_000_000}")
 }
